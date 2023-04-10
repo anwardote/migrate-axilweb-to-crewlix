@@ -1,0 +1,51 @@
+{
+  "name": "anwardote/migrate-axilweb-to-crewlix",
+  "description": "Axilweb HRM to Crewlix.",
+  "keywords": ["oauth", "laravel"],
+  "license": "MIT",
+  "homepage": "https://anwar.dev",
+  "support": {
+    "issues": "https://github.com/anwardote/migrate-axilweb-to-crewlix/issues",
+    "source": "https://github.com/anwardote/migrate-axilweb-to-crewlix"
+  },
+  "authors": [
+    {
+      "name": "Anwar",
+      "email": "me@anwar.dev"
+    }
+  ],
+  "require": {
+    "php": "^8.0|^8.2",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": "^6.0|^7.0",
+    "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0",
+    "illuminate/http": "^6.0|^7.0|^8.0|^9.0",
+    "illuminate/support": "^6.0|^7.0|^8.0|^9.0"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.0",
+    "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0",
+    "phpunit/phpunit": "^8.0|^9.3",
+    "spatie/laravel-ray": "^1.29"
+  },
+  "autoload": {
+    "psr-4": {
+      "Anwardote\\AxilwebToCrewlix\\": "src/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.x-dev"
+    },
+    "laravel": {
+      "providers": [
+        "Anwardote\\AxilwebToCrewlix\\LaravelServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
