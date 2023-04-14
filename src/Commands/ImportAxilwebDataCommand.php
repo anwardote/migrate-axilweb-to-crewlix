@@ -422,7 +422,7 @@ class ImportAxilwebDataCommand extends Command {
 		$leaveReviewProcess = LeaveReviewProcess::query()->first()?->id ?? null;
 		$default_role = app(RoleService::class)->getDefaultRole(true);
 
-		User::query()->whereNot('email','admin@crewlix.test')->forceDelete();
+		User::query()->whereNot('email','demo.user@crewlix.com')->forceDelete();
 		Media::query()->delete();
 
 		foreach ( $users as $user ) {
