@@ -68,10 +68,10 @@ class ImportAxilwebDataCommand extends Command {
 	 */
 	public function handle() {
 		$this->call('optimize:clear');
-		//		$this->importDepartments();
-		//		$this->importDesignations();
-		//		$this->importJobTypes();
-//				$this->importAttachmentTypes();
+		$this->importDepartments();
+		$this->importDesignations();
+		$this->importJobTypes();
+		$this->importAttachmentTypes();
 
 		if ( $this->option( 'avatars' ) ) {
 			$this->importAvatars();
@@ -105,7 +105,7 @@ class ImportAxilwebDataCommand extends Command {
 
 	public function importFeeds() {
 		Feed::query()->forceDelete();
-//		$this->importFeedAttachments();
+		$this->importFeedAttachments();
 		$posts = AxilwebPost::query()
 			->addSelect(['user_ulid' => AxilwebEmployee::query()->select('user_ulid')->whereColumn('posts.employee_id','=','employees.id')->limit(1)])
 			->whereNotNull('details')
