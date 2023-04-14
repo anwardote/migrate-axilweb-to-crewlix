@@ -589,14 +589,12 @@ class ImportAxilwebDataCommand extends Command {
 
 	public function importAttachmentTypes() {
 		$data = AxilwebAttachmentType::query()
-		                      ->select( 'name', 'details', 'status' )
+		                      ->select('id', 'name', 'details', 'status' )
 		                      ->whereHas( 'attachment' )
 		                      ->get()->toArray();
 
-		AttachmentType::query()->upsert( $data,
-			[ 'name' ],
-			[ 'details', 'status' ]
-		);
+		AttachmentType::query()->forceDelete();
+		AttachmentType::query()->insert( $data);
 	}
 
 	public function importAvatars() {
