@@ -433,7 +433,7 @@ class ImportAxilwebDataCommand extends Command {
 				'last_name'             => $user->last_name,
 				'email'                 => $user->email,
 				'secondary_email'       => $user->personal_email,
-				'password'              => bcrypt('test'),
+				'password'              => bcrypt('axilweb@2023'),
 				'phone'                 => $user->phone,
 				'status'                => $user->status,
 				'gender'                => $user->gender,
