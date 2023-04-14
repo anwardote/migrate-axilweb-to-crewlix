@@ -68,10 +68,6 @@ class ImportAxilwebDataCommand extends Command {
 	 */
 	public function handle() {
 		$this->call('optimize:clear');
-		$this->importDepartments();
-		$this->importDesignations();
-		$this->importJobTypes();
-		$this->importAttachmentTypes();
 
 		if ( $this->option( 'avatars' ) ) {
 			$this->importAvatars();
@@ -82,6 +78,10 @@ class ImportAxilwebDataCommand extends Command {
 		}
 
 		if ( $this->option( 'users' ) ) {
+			$this->importDepartments();
+			$this->importDesignations();
+			$this->importJobTypes();
+			$this->importAttachmentTypes();
 			$this->importUsers();
 		}
 
