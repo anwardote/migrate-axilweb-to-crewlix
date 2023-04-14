@@ -2,11 +2,12 @@
 
 namespace Anwardote\AxilwebToCrewlix\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AxilwebUserAttachment extends Model {
-
+class AxilwebPost extends Model
+{
 	protected $connection = 'axilweb';
 
-	protected $table = 'employee_attachments';
+	protected $table = 'posts';
 }

@@ -28,8 +28,12 @@ class AxilwebUser extends Model {
 		return $this->belongsTo( AxilwebJobType::class, 'job_type_id' );
 	}
 
-	public function addresses() {
-		return $this->hasManyThrough(AxilwebUserAddress::class, AxilwebEmployee::class,'id' ,'employee_id');
+	public function presentAddress() {
+		return $this->hasOneThrough(AxilwebUserAddress::class, AxilwebEmployee::class,'id' ,'employee_id')->where('type', 1);
+	}
+
+	public function permanentAddress() {
+		return $this->hasOneThrough(AxilwebUserAddress::class, AxilwebEmployee::class,'id' ,'employee_id')->where('type', 2);
 	}
 
 	public function bank() {
