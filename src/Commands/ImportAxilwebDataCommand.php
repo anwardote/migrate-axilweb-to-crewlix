@@ -73,6 +73,14 @@ class ImportAxilwebDataCommand extends Command {
 	public function handle() {
 		$this->call('optimize:clear');
 
+		if ( $date = $this->option('delete') ) {
+			try {
+				Carbon::parse($date);
+			} catch (\Exception $exception){
+				dd($exception->getMessage());
+			}
+		}
+
 		if ( $this->option( 'avatars' ) ) {
 			$this->importAvatars();
 		}
@@ -110,29 +118,20 @@ class ImportAxilwebDataCommand extends Command {
 			$this->importFixing();
 		}
 
-		if ( $this->option( 'delete' ) ) {
-			dd($this->option('delete'));
+
+
+		if ( $date = $this->option('delete')) {
+			$date = Carbon::parse($date)->format('Y-m-d');
+			$this->deleteData($date);
 		}
 	}
 
 	public function deleteData($date) {
-		$attendaces = AttendanceHistory::query()->whereNull('end_time')->get();
+		$attendaces = Attendance::query()->where('working_date', $date)->get();
 		if($count = $attendaces->count()){
-			$this->info('Total found: '.$count);
-		}else{
-			$this->info('No fixing found: ');
-			return;
+			$this->info('Total Deleting found: '.$count);
+			Attendance::query()->where('working_date', $date)->forceDelete();
 		}
-
-		foreach($attendaces as $attendace){
-			$attendace->end_time = $attendace->start_time;
-			$attendace->status = ApprovedStatus::IRREGULAR;
-			$attendace->save();
-
-			$this->info('completed fixing: '.$attendace->id);
-
-		}
-
 	}
 
 	public function importFixing() {
