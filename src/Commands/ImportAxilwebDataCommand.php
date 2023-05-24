@@ -23,6 +23,8 @@ use Crewlix\Tenant\Application\Http\Services\CalendarCycleService;
 use Crewlix\Tenant\Application\Http\Services\Tenant\FileOptimizerService;
 use Crewlix\Tenant\Application\Http\Services\UploadManagerService;
 use Crewlix\Tenant\Attendance\Http\Models\Attendance;
+use Crewlix\Tenant\Attendance\Http\Models\AttendanceHistory;
+use Crewlix\Tenant\Attendance\Http\Models\Enums\ApprovedStatus;
 use Crewlix\Tenant\Attendance\Http\Models\Settings\ShiftTemplate;
 use Crewlix\Tenant\Attendance\Http\Models\Settings\ShiftUser;
 use Crewlix\Tenant\Employee\Http\Models\Settings\AttachmentType;
@@ -48,12 +50,14 @@ use Illuminate\Support\Str;
 
 class ImportAxilwebDataCommand extends Command {
 
+
+	// axilweb:import --avatars --attachments --users --attendances --leaves --holidays --feeds
 	/**
 	 * The name and signature of the console command.
 	 *
 	 * @var string
 	 */
-	protected $signature = 'axilweb:import {--avatars} {--attachments} {--users} {--attendances} {--leaves} {--holidays} {--feeds}';
+	protected $signature = 'axilweb:import {--avatars} {--attachments} {--users} {--attendances} {--leaves} {--holidays} {--feeds} {--fixing} {--delete=}';
 
 	/**
 	 * The console command description.
@@ -101,6 +105,54 @@ class ImportAxilwebDataCommand extends Command {
 		if ( $this->option( 'feeds' ) ) {
 			$this->importFeeds();
 		}
+
+		if ( $this->option( 'fixing' ) ) {
+			$this->importFixing();
+		}
+
+		if ( $this->option( 'delete' ) ) {
+			dd($this->option('delete'));
+		}
+	}
+
+	public function deleteData($date) {
+		$attendaces = AttendanceHistory::query()->whereNull('end_time')->get();
+		if($count = $attendaces->count()){
+			$this->info('Total found: '.$count);
+		}else{
+			$this->info('No fixing found: ');
+			return;
+		}
+
+		foreach($attendaces as $attendace){
+			$attendace->end_time = $attendace->start_time;
+			$attendace->status = ApprovedStatus::IRREGULAR;
+			$attendace->save();
+
+			$this->info('completed fixing: '.$attendace->id);
+
+		}
+
+	}
+
+	public function importFixing() {
+		$attendaces = AttendanceHistory::query()->whereNull('end_time')->get();
+		if($count = $attendaces->count()){
+			$this->info('Total found: '.$count);
+		}else{
+			$this->info('No fixing found: ');
+			return;
+		}
+
+		foreach($attendaces as $attendace){
+			$attendace->end_time = $attendace->start_time;
+			$attendace->status = ApprovedStatus::IRREGULAR;
+			$attendace->save();
+
+			$this->info('completed fixing: '.$attendace->id);
+
+		}
+
 	}
 
 	public function importFeeds() {
