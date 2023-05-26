@@ -317,7 +317,7 @@ class ImportAxilwebDataCommand extends Command {
 
 		$this->createLeavePolicy();
 		$this->assignedLeaveReviewers();
-//		$this->importLeaveAttachments();
+		$this->importLeaveAttachments();
 
 		$policyId = LeavePolicy::query()->first()->id;
 
