@@ -25,6 +25,7 @@ use Crewlix\Tenant\Application\Http\Services\UploadManagerService;
 use Crewlix\Tenant\Attendance\Http\Models\Attendance;
 use Crewlix\Tenant\Attendance\Http\Models\AttendanceHistory;
 use Crewlix\Tenant\Attendance\Http\Models\Enums\ApprovedStatus;
+use Crewlix\Tenant\Attendance\Http\Models\Enums\CompletedStatus;
 use Crewlix\Tenant\Attendance\Http\Models\Settings\ShiftTemplate;
 use Crewlix\Tenant\Attendance\Http\Models\Settings\ShiftUser;
 use Crewlix\Tenant\Employee\Http\Models\Settings\AttachmentType;
@@ -51,7 +52,7 @@ use Illuminate\Support\Str;
 class ImportAxilwebDataCommand extends Command {
 
 
-	// axilweb:import --avatars --attachments --users --attendances --leaves --holidays --feeds
+	// axilweb:import --avatars --attachments --users --attendances --leaves --holidays --feeds --fixing
 	/**
 	 * The name and signature of the console command.
 	 *
@@ -135,20 +136,26 @@ class ImportAxilwebDataCommand extends Command {
 	}
 
 	public function importFixing() {
-		$attendaces = AttendanceHistory::query()->whereNull('end_time')->get();
-		if($count = $attendaces->count()){
+		$attendaceHistories = AttendanceHistory::query()->with('attendance')->whereNull('end_time')->get();
+		if($count = $attendaceHistories->count()){
 			$this->info('Total found: '.$count);
 		}else{
 			$this->info('No fixing found: ');
 			return;
 		}
 
-		foreach($attendaces as $attendace){
-			$attendace->end_time = $attendace->start_time;
-			$attendace->status = ApprovedStatus::IRREGULAR;
-			$attendace->save();
+		foreach($attendaceHistories as $history){
+			$history->end_time = Carbon::parse($history->start_time)->addSeconds(60);
+			$history->total_spent = 60;
+			$history->status = ApprovedStatus::IRREGULAR;
+			$history->save();
 
-			$this->info('completed fixing: '.$attendace->id);
+			if($attendace = $history->attendance){
+				$attendace->completed_status = CompletedStatus::INCOMPLETE;
+				$attendace->save();
+			}
+
+			$this->info('completed fixing: '.$history->attendace_id);
 
 		}
 
