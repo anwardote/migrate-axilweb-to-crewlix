@@ -317,7 +317,7 @@ class ImportAxilwebDataCommand extends Command {
 
 		$this->createLeavePolicy();
 		$this->assignedLeaveReviewers();
-		$this->importLeaveAttachments();
+//		$this->importLeaveAttachments();
 
 		$policyId = LeavePolicy::query()->first()->id;
 
@@ -367,6 +367,10 @@ class ImportAxilwebDataCommand extends Command {
 
 			$this->info('completed:'. $leave->id);
 		}
+	}
+
+	public function addShift(  ) {
+
 	}
 
 
@@ -718,6 +722,21 @@ class ImportAxilwebDataCommand extends Command {
 
 		foreach ($dateRange->toArray() as $date) {
 			$data[] = ['date' => $date->format('Y-m-d'), 'leave_application_id' => $application_id,'calendar_cycle_id' =>  app(CalendarCycleService::class)->getCycleIdBy($date)];
+
+
+			$startTime = TenantCarbon::parse($startDate)->startOfDay()->addHours(10);
+			$shiftUser = ShiftUser::query()
+			                      ->firstOrCreate(
+				                      [ 'user_id' => $application->user_id, 'date' => $date->format('Y-m-d')],
+				                      [ 'id' => strtolower(Str::ulid()), 'user_id' => $application->user_id, 'date' => $date->format('Y-m-d') ]);
+
+
+			$shiftUser->times()->create([
+				'start_time' => $startTime,
+				'end_time' => Carbon::parse($startTime)->startOfHour()->addHours(8),
+				'status' => 1
+			]);
+
 		}
 
 		DB::table('leave_application_entries')->where('leave_application_id', $application_id)->delete();
